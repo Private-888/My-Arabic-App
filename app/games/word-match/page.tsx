@@ -35,6 +35,7 @@ export default function WordMatchPage() {
     if (selectedArabic && selectedEnglish) {
       checkMatch()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedArabic, selectedEnglish])
 
   async function loadWords() {
