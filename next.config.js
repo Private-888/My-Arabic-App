@@ -2,15 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['@supabase/supabase-js'],
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/home',
-        permanent: false,
-      },
-    ]
-  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {
