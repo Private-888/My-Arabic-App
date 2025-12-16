@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { SessionCard } from '@/components/session/SessionCard'
 import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Button } from '@/components/ui/Button'
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner'
+import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import { submitReview } from '@/lib/actions/reviews'
 import { buildDailyQueue } from '@/lib/session/buildDailyQueue'
 import type { ReviewWithWord } from '@/lib/session/types'
@@ -21,6 +23,7 @@ export default function SessionPage() {
 
   useEffect(() => {
     loadSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function loadSession() {
@@ -87,7 +90,7 @@ export default function SessionPage() {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8">
         <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
+          <LoadingSpinner size="lg" className="mx-auto mb-4" />
           <p className="text-gray-400">Loading session...</p>
         </div>
       </main>
@@ -97,11 +100,13 @@ export default function SessionPage() {
   if (error && queue.length === 0) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-8">
-        <div className="text-center max-w-md">
-          <div className="text-4xl mb-4">📚</div>
-          <h2 className="text-2xl font-bold text-white mb-4">No Words to Review</h2>
-          <p className="text-gray-400 mb-6">{error}</p>
-          <Button variant="accent" onClick={() => router.push('/home')}>
+        <div className="max-w-md w-full">
+          <ErrorMessage
+            message={error}
+            onRetry={loadSession}
+            className="mb-6"
+          />
+          <Button variant="accent" fullWidth onClick={() => router.push('/home')}>
             Go Home
           </Button>
         </div>
@@ -126,6 +131,9 @@ export default function SessionPage() {
             </span>
             {error && (
               <span className="text-sm text-red-400">{error}</span>
+            )}
+            {submitting && (
+              <span className="text-sm text-gray-400">Submitting...</span>
             )}
           </div>
           <ProgressBar value={currentIndex + 1} max={queue.length} showLabel={false} />

@@ -44,6 +44,13 @@ export default async function PracticePage() {
       href: '/practice/bookmarked',
       color: 'secondary',
     },
+    {
+      title: 'Mini Games',
+      description: 'Play fun word games',
+      icon: '🎮',
+      href: '/games',
+      color: 'accent',
+    },
   ]
 
   return (

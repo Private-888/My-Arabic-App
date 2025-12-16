@@ -64,7 +64,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
-            <h2 className="text-xl font-bold text-white mb-4">Today's Progress</h2>
+            <h2 className="text-xl font-bold text-white mb-4">Today&apos;s Progress</h2>
             <ProgressBar
               value={reviewsCompleted}
               max={dailyGoal}

@@ -15,7 +15,7 @@ export default function SessionCompletePage() {
           Session Complete!
         </h1>
         <p className="text-gray-400 mb-8">
-          Great work! You've completed today's practice session.
+          Great work! You&apos;ve completed today&apos;s practice session.
         </p>
         <div className="space-y-4">
           <Button

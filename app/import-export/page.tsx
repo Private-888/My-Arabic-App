@@ -37,7 +37,7 @@ export default function ImportExportPage() {
 
       // Convert to CSV
       const headers = ['Category', 'Term', 'Arabic', 'Transliteration', 'Meaning', 'Notes']
-      const rows = words.map((word) => [
+      const rows = words.map((word: any) => [
         word.category,
         word.term,
         word.arabic,
@@ -48,7 +48,7 @@ export default function ImportExportPage() {
 
       const csvContent = [
         headers.join(','),
-        ...rows.map((row) =>
+        ...rows.map((row: any[]) =>
           row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(',')
         ),
       ].join('\n')

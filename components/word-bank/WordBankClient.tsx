@@ -3,12 +3,22 @@
 import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { ErrorMessage } from '@/components/ui/ErrorMessage'
 import type { Word } from '@/lib/session/types'
 
 interface WordBankClientProps {
   initialWords: Word[]
   categories: string[]
   userId: string
+}
+
+interface WordBankClientState {
+  words: Word[]
+  searchTerm: string
+  selectedCategory: string
+  error: string | null
+  deleting: string | null
 }
 
 export default function WordBankClient({
@@ -19,6 +29,8 @@ export default function WordBankClient({
   const [words, setWords] = useState(initialWords)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [error, setError] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   const filteredWords = words.filter((word) => {
     const matchesSearch =
@@ -37,12 +49,23 @@ export default function WordBankClient({
   async function handleDelete(wordId: string) {
     if (!confirm('Are you sure you want to delete this word?')) return
 
-    const response = await fetch(`/api/words/${wordId}`, {
-      method: 'DELETE',
-    })
+    try {
+      setDeleting(wordId)
+      setError(null)
+      const response = await fetch(`/api/words/${wordId}`, {
+        method: 'DELETE',
+      })
 
-    if (response.ok) {
-      setWords(words.filter((w) => w.id !== wordId))
+      if (response.ok) {
+        setWords(words.filter((w) => w.id !== wordId))
+      } else {
+        const data = await response.json()
+        setError(data.error || 'Failed to delete word')
+      }
+    } catch (err) {
+      setError('Failed to delete word. Please try again.')
+    } finally {
+      setDeleting(null)
     }
   }
 
@@ -94,24 +117,36 @@ export default function WordBankClient({
         </div>
       </Card>
 
+      {/* Error Message */}
+      {error && (
+        <ErrorMessage
+          message={error}
+          onRetry={() => setError(null)}
+          className="mb-4"
+        />
+      )}
+
       {/* Words List */}
       <div className="space-y-4">
         {filteredWords.length === 0 ? (
-          <Card className="text-center">
-            <div className="text-5xl mb-4">📝</div>
-            <h2 className="text-2xl font-bold text-white mb-2">
-              No Words Found
-            </h2>
-            <p className="text-gray-400 mb-4">
-              {words.length === 0
-                ? 'Start building your vocabulary!'
-                : 'Try adjusting your search or filter.'}
-            </p>
-            {words.length === 0 && (
-              <Button variant="accent" asChild>
-                <a href="/word-bank/add">Add Your First Word</a>
-              </Button>
-            )}
+          <Card>
+            <EmptyState
+              icon="📝"
+              title="No Words Found"
+              description={
+                words.length === 0
+                  ? 'Start building your vocabulary!'
+                  : 'Try adjusting your search or filter.'
+              }
+              action={
+                words.length === 0
+                  ? {
+                      label: 'Add Your First Word',
+                      onClick: () => (window.location.href = '/word-bank/add'),
+                    }
+                  : undefined
+              }
+            />
           </Card>
         ) : (
           filteredWords.map((word) => (
@@ -160,9 +195,10 @@ export default function WordBankClient({
                     variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(word.id)}
+                    disabled={deleting === word.id}
                     className="text-red-400 hover:text-red-300"
                   >
-                    Delete
+                    {deleting === word.id ? 'Deleting...' : 'Delete'}
                   </Button>
                 </div>
               </div>

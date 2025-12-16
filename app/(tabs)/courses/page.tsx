@@ -38,7 +38,7 @@ export default async function CoursesPage() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {courses.map((course) => {
+            {courses.map((course: any) => {
               const progress = course.course_progress?.[0]
               const completedPercent = progress?.completed_percent || 0
 

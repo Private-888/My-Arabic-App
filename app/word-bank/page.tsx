@@ -26,8 +26,8 @@ export default async function WordBankPage() {
     .eq('user_id', user.id)
 
   const uniqueCategories = Array.from(
-    new Set(categories?.map((c) => c.category) || [])
-  ).sort()
+    new Set(categories?.map((c: any) => c.category) || [])
+  ).sort() as string[]
 
   return (
     <main className="min-h-screen p-8 pb-24">
