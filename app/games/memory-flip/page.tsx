@@ -26,12 +26,14 @@ export default function MemoryFlipPage() {
 
   useEffect(() => {
     loadWords()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (flippedCards.length === 2) {
       checkMatch()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flippedCards])
 
   async function loadWords() {

@@ -19,12 +19,14 @@ export default function QuickTapPage() {
 
   useEffect(() => {
     loadWords()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     if (words.length > 0 && !currentWord) {
       nextQuestion()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [words])
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 
@@ -8,22 +8,23 @@ export const metadata: Metadata = {
   title: 'My Arabic App',
   description: 'Personal Arabic Learning PWA',
   manifest: '/site.webmanifest',
-  themeColor: '#0a1929',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'My Arabic App',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
   icons: {
     icon: '/icon-192.png',
     apple: '/icon-192.png',
   },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#0a1929',
 }
 
 export default function RootLayout({

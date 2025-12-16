@@ -8,23 +8,36 @@ export async function middleware(request: NextRequest) {
     },
   })
 
+  // Skip auth check for API routes and static files
+  if (request.nextUrl.pathname.startsWith('/api') || 
+      request.nextUrl.pathname.startsWith('/_next') ||
+      request.nextUrl.pathname.startsWith('/favicon') ||
+      request.nextUrl.pathname.match(/\.(ico|png|jpg|jpeg|svg|webp)$/)) {
+    return response
+  }
+
   // Simple auth check - just verify token exists
   const token = request.cookies.get('sb-access-token')?.value ||
     request.cookies.get('sb-auth-token')?.value
 
   if (token) {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-      {
-        global: {
-          headers: {
-            Authorization: `Bearer ${token}`,
+    try {
+      const supabase = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+        {
+          global: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        },
-      }
-    )
-    await supabase.auth.getUser()
+        }
+      )
+      await supabase.auth.getUser()
+    } catch (error) {
+      // Silently fail - let the route handle auth
+      console.error('Middleware auth check failed:', error)
+    }
   }
 
   return response
