@@ -1,46 +1,22 @@
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  })
-
-  // Skip auth check for API routes and static files
-  if (request.nextUrl.pathname.startsWith('/api') || 
-      request.nextUrl.pathname.startsWith('/_next') ||
-      request.nextUrl.pathname.startsWith('/favicon') ||
-      request.nextUrl.pathname.match(/\.(ico|png|jpg|jpeg|svg|webp)$/)) {
-    return response
+  // Skip middleware for API routes, static files, and auth routes
+  const pathname = request.nextUrl.pathname
+  
+  if (
+    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/favicon') ||
+    pathname.match(/\.(ico|png|jpg|jpeg|svg|webp|css|js|woff|woff2)$/)
+  ) {
+    return NextResponse.next()
   }
 
-  // Simple auth check - just verify token exists
-  const token = request.cookies.get('sb-access-token')?.value ||
-    request.cookies.get('sb-auth-token')?.value
-
-  if (token) {
-    try {
-      const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-        {
-          global: {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        }
-      )
-      await supabase.auth.getUser()
-    } catch (error) {
-      // Silently fail - let the route handle auth
-      console.error('Middleware auth check failed:', error)
-    }
-  }
-
-  return response
+  // For all other routes, just pass through
+  // Authentication will be handled by the individual pages/components
+  return NextResponse.next()
 }
 
 export const config = {
