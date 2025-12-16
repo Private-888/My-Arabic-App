@@ -20,7 +20,7 @@ export default function WordMatchPage() {
 
   useEffect(() => {
     loadWords()
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (timeLeft > 0 && !gameOver) {
